@@ -1,0 +1,1 @@
+declare module 'gridstack/dist/es5/gridstack-all'
