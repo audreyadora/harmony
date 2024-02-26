@@ -440,7 +440,6 @@ let labelflag = false;
         }
         grid_labels = data;
     }
-    let fps = 0;
     let viselements = 0;
     let selected_notes = [] as number[]
     let selected_scale = new Array(12).fill('0') as string[]
@@ -559,7 +558,6 @@ let labelflag = false;
             if (Piano) {
                 setGridLabels(Piano.grid_labels)
                 multiplier = Piano.Render?.multiplier || 1;
-                fps = Math.round(Piano._fps)
                 viselements = Piano.State?.note_render_data.note_count || 0;
                 const selected_ = [] as number[]
                 selected_x = [] as number[]
@@ -636,8 +634,6 @@ function onKeyUp(e: KeyboardEvent) {
                     {/if}
 
                     </div>
-                
-            <span class="badge variant-ghost-surface">FPS: {fps}</span>
             <span class="badge variant-ghost-surface">Visible Notes: {viselements}</span>
             <div class="dropdown-spacer">
                  <Dropdown defaultInputText='default' bind:isOpen={isOpen} bind:selected_val={selected_val} dropdownValues={dropdown_vals}/>
