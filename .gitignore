@@ -3,7 +3,7 @@ node_modules
 /build
 /.svelte-kit
 /src/components/Note
-/src/components/PianoRoll.svelte
+/src/components/PianoRoll.txt
 /package
 /
 /.vscode
@@ -12,3 +12,4 @@ node_modules
 !.env.example
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+/src/routes/scratch.txt

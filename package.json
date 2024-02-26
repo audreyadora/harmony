@@ -27,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "@typescript-eslint/parser": "^6.7.2",
     "autoprefixer": "10.4.15",
+    "depcheck": "^1.4.7",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-svelte": "^2.33.2",
@@ -46,27 +47,14 @@
   "type": "module",
   "dependencies": {
     "@floating-ui/dom": "^1.5.3",
-    "@neodrag/svelte": "^2.0.3",
     "@simonwep/pickr": "^1.9.0",
     "@tonejs/midi": "^2.0.28",
     "@types/webgl2": "^0.0.10",
     "@webgpu/types": "^0.1.39",
-    "fast_array_intersect": "^1.1.0",
-    "gridstack": "^9.2.0",
-    "immer": "^10.0.3",
-    "interactjs": "^1.10.19",
-    "layercake": "^8.0.0",
-    "music-theory-data": "^1.1.1",
-    "nodemon": "^3.0.1",
     "quickselect": "^2.0.0",
     "rbush": "^3.0.1",
-    "svelte-canvas": "^0.9.3",
-    "svelte-grid": "^5.1.2",
-    "svelte-portal": "^2.2.0",
     "svelte-preprocess": "^5.0.4",
     "svelte-splitpanes": "^0.8.0",
-    "twgl.js": "^5.5.3",
-    "uuid": "^9.0.1",
-    "yaml": "^2.3.4"
+    "uuid": "^9.0.1"
   }
 }

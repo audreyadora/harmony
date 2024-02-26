@@ -1,5 +1,4 @@
 <script lang='ts'>
-	import type { Point } from '@interactjs/core/types';
     import { onMount } from 'svelte';
 
     export let defaultInputText = '';
