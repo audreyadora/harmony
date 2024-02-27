@@ -1,6 +1,6 @@
 
 <script lang='ts'>
-    import { RangeSlider } from '@skeletonlabs/skeleton';
+    import { RangeSlider, Accordion, AccordionItem, FileDropzone} from '@skeletonlabs/skeleton';
     import { Pane, Splitpanes } from 'svelte-splitpanes';
     import {scaleGridX} from '../../components/PianoRoll/Grid'
     import { onMount } from 'svelte';
@@ -10,7 +10,6 @@
     import {PianoRoll} from '../../components/PianoRoll/PianoRoll'
     import { v4 as uuid4 } from 'uuid';
     import type {RgbaColor} from 'svelte-awesome-color-picker';
-    import { FileDropzone } from '@skeletonlabs/skeleton';
     import {Fretboard} from '../../components/Fretboard/Fretboard'
     import Dropdown from '../../components/Dropdown.svelte';
     import ColorPicker, { ChromeVariant } from 'svelte-awesome-color-picker';
@@ -19,10 +18,15 @@
     import Table from '../../components/Table.svelte'
     import {scaleLookup} from '../../lib/scaleLookup'
 
-
+   
+    import F7Sparkles from '~icons/f7/sparkles'
+    import CarbonTuning from '~icons/carbon/tuning'
+    import F7Tuningfork from '~icons/f7/tuningfork'
+    import MdiMusicClefBass from '~icons/mdi/music-clef-bass'
     import BitcoinIconsVisibleFilled from '~icons/bitcoin-icons/visible-filled'
     import BitcoinIconsHiddenOutline from '~icons/bitcoin-icons/hidden-outline'
 
+    
     const  note_names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
     
     const music_data_bin = Object.fromEntries(MusicData.scales.map(s => [s.binary.toString(2), s.binary]))
@@ -54,12 +58,16 @@
     
     let intervalMarkersVisible = [false, true, false, true, false, false, true, false, true, false, true, false];
     let intervalMarkersTextVisible = [false, true, false, true, false, false, true, false, true, false, true, false];
+    let fretboardTuning = [8,1,6,11,4,9,2,7,11,4]
+    let numStrings = 6
+    let minStrings = 2
+    let maxStrings = 10
 
     $:fretboardMarkerColorHandler(interval_marker_colors)
     $:fretboardTextColorHandler(interval_text_colors)
     $:intervalColorPickerPopupHandler(interval_popup_state_array)
     $:intervalColorHandler(interval_color_input)
-
+    $:fretboardTuningHandler(fretboardTuning)
    
     function markerColorInputPopupHandler(event: MouseEvent) {
         const target = event.target as HTMLElement;
@@ -130,6 +138,11 @@
                 interval_text_colors[index-12] = interval_color_input 
             }
         }
+    }
+
+    function fretboardTuningHandler(fretboardTuning: number[]) {
+        const tuning = fretboardTuning.filter((n,i) => i >= maxStrings-numStrings)
+        if (FB) {FB.setTuning(tuning)};
     }
 
     function fretboardMarkerColorHandler(rgbarr: RgbaColor[]) {
@@ -616,75 +629,125 @@ function onKeyUp(e: KeyboardEvent) {
 </script>
 
 <Splitpanes class="modern-theme" style="height: 100%">
-	<Pane size={18}>
+	<Pane size={22}>
         <div class="sidebarcontainer">
-            <div id="colorselector" class="colorwrapper"> 
-                    {#if interval_popup_state}
-                        
-                            <ColorPicker components={{wrapper: ColorPickerWrapper }} isOpen={true} label={''} isInput={false} isPopup={false} bind:rgb={interval_color_input}/>
-                    
-                    {:else}
-                      
-                        <FileDropzone class="fdz" name="files" accept=".mid, .MID" bind:files={files} on:change={onChangeHandler}>
-                            <svelte:fragment slot="lead">💫</svelte:fragment>
-                            <svelte:fragment slot="message"><span style="font-weight:bold">Select a file </span>or drag and drop</svelte:fragment>
-                            <svelte:fragment slot="meta">accepts '.mid'</svelte:fragment>
-                        </FileDropzone>
-                   
-                    {/if}
-
-                    </div>
-            <span class="badge variant-ghost-surface">Visible Notes: {viselements}</span>
-            <div class="dropdown-spacer">
-                 <Dropdown defaultInputText='default' bind:isOpen={isOpen} bind:selected_val={selected_val} dropdownValues={dropdown_vals}/>
-            </div>
-
-            <div>Key: {note_names[music_key]} </div>
-            <RangeSlider for="boxcontrols" name="range-slider" bind:value={music_key} min={0} max={11} step={1} ></RangeSlider>    
-            
-            <div class="interval-parent">
-                <div class="interval-wrapper" style={`background-color: rgba(var(--color-surface-400)); justify-items: start;`}>
-                    <div><span style="font-weight: bold; padding-left: 0.4rem; color: rgba(var(--color-surface-50));">Marker</span></div>
-                    <div><span style="font-weight: bold; padding-left: 0.4rem; color: rgba(var(--color-surface-50));">Text</span></div>
-                    <div><span style="font-weight: bold; padding-left: 1.2rem; color: rgba(var(--color-surface-50));">I</span></div>
-                    <div><span style="font-weight: bold; padding-left: 0.2rem; padding-right: 0.2rem; color: rgba(var(--color-surface-50));">Note</span></div>
+           
+            <div class="sidebar-tl">
+                {#if interval_popup_state} 
+                <div class="colorpicker center-h">
+                    <ColorPicker components={{wrapper: ColorPickerWrapper }} isOpen={interval_popup_state} label={''} isInput={false} isPopup={false} bind:rgb={interval_color_input}/>
                 </div>
-                {#each [...Array(12).fill(0)] as a,i}
-                    <div class="interval-wrapper" style={`background-color: rgba(var(${i%2 === 0 ?  '--color-surface-50' : '--color-surface-200' }))`}>
+                {:else}
+            
+                <FileDropzone class="fdz" name="files" accept=".mid, .MID" bind:files={files} on:change={onChangeHandler}>
+                    <svelte:fragment slot="lead">💫</svelte:fragment>
+                    <svelte:fragment slot="message"><span style="font-weight:bold">Select a file </span>or drag and drop</svelte:fragment>
+                    <svelte:fragment slot="meta">accepts '.mid'</svelte:fragment>
+                </FileDropzone>
+        
+            
+                <span class="badge variant-ghost-surface">Visible Notes: {viselements}</span>
+                <div class="dropdown-spacer">
+                    <Dropdown defaultInputText='default' bind:isOpen={isOpen} bind:selected_val={selected_val} dropdownValues={dropdown_vals}/>
+                </div>
+
+                
+                {/if}
+            </div>
+            
+            <div class="accordion-control text-left w-full flex items-center space-x-4 py-2 px-4 hover:bg-primary-hover-token rounded-container-token ">
+                <div class="accordion-lead"><MdiMusicClefBass/></div>
+                <div class="accordion-summary flex-1"><b>Key: {note_names[music_key]}</b>
+                    <RangeSlider for="boxcontrols" name="range-slider" bind:value={music_key} min={0} max={11} step={1} ></RangeSlider>   
+                </div>
+            </div>
+            <div class="acc-scroll-y">
+                <Accordion autocollapse > 
+                    <AccordionItem>
+                        <svelte:fragment slot="summary">
+                            <div>
+                                <b>Tuning: {fretboardTuning.filter((n,i) => i > maxStrings - numStrings - 1).map(n => note_names[n]).join(' ')}</b>
+                            </div>
+                        </svelte:fragment>
+                        <svelte:fragment slot="lead"><F7Tuningfork/></svelte:fragment>
+                        <svelte:fragment slot="content">
+                            <div class="scale-parent">
+                                {#each [...Array(numStrings).fill(0)] as a,i}
+                                    <div class="scale-wrapper" style={`background-color: rgba(var(${i%2 === 0 ?  '--color-surface-50' : '--color-surface-100' }))`}>
+                                        <RangeSlider for="boxcontrols" name="range-slider" bind:value={fretboardTuning[maxStrings-i-1]} min={0} max={11} step={1} ></RangeSlider>  
+                                        <div>{note_names[fretboardTuning[maxStrings-i-1]]}</div>
+                                    </div>
+                                {/each}
+                            </div>
+                        </svelte:fragment>
+                    </AccordionItem>
+                    <AccordionItem open>
+                        <svelte:fragment slot="summary"><b>Markers</b></svelte:fragment>
+                        <svelte:fragment slot="lead"><F7Sparkles/></svelte:fragment>
+                        <svelte:fragment slot="content">
+                            <div class="interval-parent">
+                                <div class="interval-wrapper" style={`background-color: rgba(var(--color-surface-400)); justify-items: start;`}>
+                                    <div><span style="font-weight: bold; padding-left: 0.4rem; color: rgba(var(--color-surface-50));">Marker</span></div>
+                                    <div><span style="font-weight: bold; padding-left: 0.4rem; color: rgba(var(--color-surface-50));">Text</span></div>
+                                    <div><span style="font-weight: bold; padding-left: 1.2rem; color: rgba(var(--color-surface-50));">I</span></div>
+                                    <div><span style="font-weight: bold; padding-left: 0.2rem; padding-right: 0.2rem; color: rgba(var(--color-surface-50));">Note</span></div>
+                                </div>
+                                {#each [...Array(12).fill(0)] as a,i}
+                                    <div class="interval-wrapper" style={`background-color: rgba(var(${i%2 === 0 ?  '--color-surface-50' : '--color-surface-200' }))`}>
+                                        
+                                        <div class={`colorselector-wrapper ${intervalMarkersVisible[(i)%12] ? 'text-marker' : 'text-marker-b'}`}>
+                                            <div class="colorselector-marker" id={`cm${i}`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(interval_marker_colors[(i)%12]).map(c => `${c}`).join(',')});`} />
+                                            <button on:click={()=>{intervalColorMarkerSelectClickHandler(i%12)}}> 
+                                                {#if intervalMarkersVisible[(i)%12]}
+                                                    <BitcoinIconsVisibleFilled style="color: rgba(var(--color-surface-400));"/>
+                                                {:else}
+                                                    <BitcoinIconsHiddenOutline style="color: rgba(var(--color-surface-400));"/>
+                                                {/if}
+                                            </button>
+                                        </div>
+                                        <div class={`colorselector-wrapper ${intervalMarkersTextVisible[(i)%12] ? 'text-marker' : 'text-marker-b'}`}>
+                                            <div class="colorselector-marker" id={`cm${i+12}`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(interval_text_colors[(i)%12]).map(c => `${c}`).join(',')});`} />
+                                            <button on:click={()=>{intervalColorMarkerTextSelectClickHandler(i%12)}}> 
+                                                {#if intervalMarkersTextVisible[(i)%12]}
+                                                    <BitcoinIconsVisibleFilled style="color: rgba(var(--color-surface-400));"/>
+                                                {:else}
+                                                    <BitcoinIconsHiddenOutline style="color: rgba(var(--color-surface-400));"/>
+                                                {/if}
+                                            </button>
+                                        </div>
+                                        
+                                        <div id={`im${i+12}`}>{i}</div>
+                                        <div>{note_names[mod(i+music_key,12)]}</div>
+                                        <div></div>
+                                    </div>
+                                {/each}
+                            </div>
+                        </svelte:fragment>
                         
-                        <div class={`colorselector-wrapper ${intervalMarkersVisible[(i)%12] ? 'text-marker' : 'text-marker-b'}`}>
-                            <div class="colorselector-marker" id={`cm${i}`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(interval_marker_colors[(i)%12]).map(c => `${c}`).join(',')});`} />
-                            <button on:click={()=>{intervalColorMarkerSelectClickHandler(i%12)}}> 
-                                {#if intervalMarkersVisible[(i)%12]}
-                                    <BitcoinIconsVisibleFilled style="color: rgba(var(--color-surface-400));"/>
-                                {:else}
-                                    <BitcoinIconsHiddenOutline style="color: rgba(var(--color-surface-400));"/>
-                                {/if}
-                            </button>
-                        </div>
-                        <div class={`colorselector-wrapper ${intervalMarkersTextVisible[(i)%12] ? 'text-marker' : 'text-marker-b'}`}>
-                            <div class="colorselector-marker" id={`cm${i+12}`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(interval_text_colors[(i)%12]).map(c => `${c}`).join(',')});`} />
-                            <button on:click={()=>{intervalColorMarkerTextSelectClickHandler(i%12)}}> 
-                                {#if intervalMarkersTextVisible[(i)%12]}
-                                    <BitcoinIconsVisibleFilled style="color: rgba(var(--color-surface-400));"/>
-                                {:else}
-                                    <BitcoinIconsHiddenOutline style="color: rgba(var(--color-surface-400));"/>
-                                {/if}
-                              </button>
-                        </div>
+                    </AccordionItem>
+                    <AccordionItem>
+                        <svelte:fragment slot="summary"><b>Fretboard</b></svelte:fragment>
+                        <svelte:fragment slot="lead"><CarbonTuning/></svelte:fragment>
+                        <svelte:fragment slot="content">
+                            <RangeSlider for="boxcontrols" name="range-slider" bind:value={numStrings} min={2} max={10} step={1} ></RangeSlider>  
+                            <div> Strings: 6 </div>
+                            <RangeSlider for="boxcontrols" name="range-slider" bind:value={numStrings} min={2} max={10} step={1} ></RangeSlider>  
+                            <div> Frets: 22 </div>
+                            <div> Base Fret Color: </div>
+                            <div> Marker Fret Color: </div>
+                            <div> 0th Fret Color: </div>
+                        </svelte:fragment>
                         
-                        <div id={`im${i+12}`}>{i}</div>
-                        <div>{note_names[mod(i+music_key,12)]}</div>
-                        <div></div>
-                    </div>
-                {/each}
+                    </AccordionItem>
+                
+                </Accordion>
             </div>
         </div>
     </Pane>
 	<Pane>
 		<Splitpanes class="modern-theme" horizontal="{true}">
 			<Pane size={20}>
-                <div id="fbwrapper" class="wrapper">
+                <div id="fbwrapper" class="wrapper noselect" draggable="false">
                     <canvas id={fretboard_id} class="fbinstance noselect"  bind:this={fb_canvas} ></canvas>
                 </div>
             </Pane>
@@ -695,7 +758,7 @@ function onKeyUp(e: KeyboardEvent) {
                 <Pane  size={50}>
                 <Splitpanes class="modern-theme" >
                     <Pane size={5}>
-
+                        
                     </Pane>
                     <Pane minSize={10} >
                         <div class="container noselect" draggable="false" >
@@ -732,6 +795,27 @@ function onKeyUp(e: KeyboardEvent) {
 	on:keyup={onKeyUp}
 />
 <style>
+    .acc-scroll-y {
+        position: relative;
+        display: flex;
+        min-width: 100%;
+        max-width: 100%;
+        overflow-y: auto;
+        max-height: 100%;
+    }
+    .center-h {
+        display: flex;
+        justify-content: center;
+    }
+    .colorpicker {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+      
+    }
 :global(.splitpanes__pane) {
   background-color: #b8bedd;
   justify-content: center;
@@ -743,13 +827,17 @@ function onKeyUp(e: KeyboardEvent) {
     --picker-height: 15vh;
    
 }
-.colorwrapper {
-    display: block;
+.sidebar-tl {
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
     width: 100%;
     height: 100%;
     padding-top: 0px;
-    height: 20vh;
+    min-height: 27vh;
+    max-height: 27vh;
+    gap: 0.6rem;
 }
 .fdz {
     height: 20vh;
@@ -772,6 +860,18 @@ function onKeyUp(e: KeyboardEvent) {
     justify-items: center;
     width: 100%;
     height: max-content;
+    border: solid 1px rgba(var(--color-secondary-400));
+    border-radius: 3px;
+    overflow: hidden;
+   
+}
+.scale-parent {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-items: center;
+    width: 100%;
+    height: 100%;
     border: solid 1px rgba(var(--color-secondary-400));
     border-radius: 3px;
     overflow: hidden;
@@ -842,20 +942,38 @@ function onKeyUp(e: KeyboardEvent) {
 .interval-wrapper:nth-child(3) { grid-area: 1 / 3 / 2 / 4; }
 .interval-wrapper:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
 
+.scale-wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 1px;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    grid-template-columns: 1fr 2rem;
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+}
+.scale-wrapper:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+.scale-wrapper:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
+
+
 
 .dropdown-spacer {
     padding: 10px;
 
 }
 .sidebarcontainer {
+    position: relative;
     padding-top: 0px;
     padding-left: 0.6rem;
     padding-right: 0.6rem;
     width: 100%;
-    height: 90vh;
+    height: 93vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: start;
     gap: 0.6rem;
 }
 

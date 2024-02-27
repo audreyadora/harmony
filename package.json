@@ -13,7 +13,11 @@
   },
   "devDependencies": {
     "@iconify-json/bitcoin-icons": "^1.1.0",
+    "@iconify-json/carbon": "^1.1.30",
+    "@iconify-json/f7": "^1.1.0",
+    "@iconify-json/game-icons": "^1.1.7",
     "@iconify-json/heroicons": "^1.1.19",
+    "@iconify-json/mdi": "^1.1.64",
     "@interactjs/types": "^1.10.19",
     "@skeletonlabs/skeleton": "2.1.0",
     "@skeletonlabs/tw-plugin": "0.2.0",
@@ -50,9 +54,11 @@
     "@simonwep/pickr": "^1.9.0",
     "@tonejs/midi": "^2.0.28",
     "@types/webgl2": "^0.0.10",
+    "@vercel/edge-config": "^1.0.2",
     "@webgpu/types": "^0.1.39",
     "quickselect": "^2.0.0",
     "rbush": "^3.0.1",
+    "svelte-portal": "^2.2.1",
     "svelte-preprocess": "^5.0.4",
     "svelte-splitpanes": "^0.8.0",
     "uuid": "^9.0.1"

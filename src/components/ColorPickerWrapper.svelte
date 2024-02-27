@@ -1,6 +1,6 @@
 <script lang="ts">
     
-	
+	import { portal } from "svelte-portal";
 	export let ColorPickerWrapper;
 	export let isOpen: boolean;
 	export let isPopup: boolean;
@@ -9,6 +9,7 @@
 </script>
 
 <div
+    use:portal={"#test"}
 	class="wrapper"
 	bind:this={ColorPickerWrapper}
 	class:isOpen
@@ -22,6 +23,7 @@
 
 <style>
 	div {
+        
 		padding: 8px 5px 5px 8px;
 		background-color: white;
 		margin-left: -4px;
@@ -32,11 +34,12 @@
 	}
 	.isOpen {
 		display: block;
+    
 	}
 	.isPopup {
         position: absolute;
-        top: 0;
-        left: 0;
+        top: 0px;
+        left: 0px;
 		z-index: var(--picker-z-index, 2);
 	}
 </style>
