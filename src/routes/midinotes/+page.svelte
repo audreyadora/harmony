@@ -18,11 +18,7 @@
     import Table from '../../components/Table.svelte'
     import {scaleLookup} from '../../lib/scaleLookup'
 
-   
-    import F7Sparkles from '~icons/f7/sparkles'
-    import CarbonTuning from '~icons/carbon/tuning'
-    import F7Tuningfork from '~icons/f7/tuningfork'
-    import MdiMusicClefBass from '~icons/mdi/music-clef-bass'
+
     import BitcoinIconsVisibleFilled from '~icons/bitcoin-icons/visible-filled'
     import BitcoinIconsHiddenOutline from '~icons/bitcoin-icons/hidden-outline'
 
