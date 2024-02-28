@@ -51,24 +51,55 @@
     let listboxIntervals = [] as number[]
     let interval_color_input = {r:255,g:0,b:0,a:1}
     let interval_colors_selected_indices = [] as number[]
-    let interval_marker_colors = [{r:255,g:0,b:0,a:1},{r:255,g:0,b:0,a:1},{r:255,g:239,b:184,a:1},{r:255,g:225,b:225,a:1},{r:136,g:255,b:112,a:1},{r:226,g:197,b:255,a:1},{r:0,g:0,b:0,a:1},{r:152,g:163,b:255,a:1},{r:0,g:0,b:0,a:1},{r:251,g:251,b:251,a:1},{r:0,g:0,b:0,a:1},{r:255,g:213,b:179,a:1}];
-    let interval_text_colors = [{r:255,g:255,b:255,a:1},{r:255,g:255,b:255,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:26,g:3,b:3,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:256,g:256,b:256,a:1},{r:0,g:0,b:0,a:1}];
+
+    let interval_marker_colors = [{r:255,g:0,b:0,a:1},{r:255,g:0,b:0,a:1},{r:255,g:239,b:184,a:1},{r:255,g:239,b:184,a:1},{r:136,g:255,b:112,a:1},{r:226,g:197,b:255,a:1},{r:226,g:197,b:255,a:1},{r:152,g:163,b:255,a:1},{r:152,g:163,b:255,a:1},{r:255,g:213,b:179,a:1},{r:255,g:213,b:179,a:1},{r:255,g:213,b:179,a:1}];
+    let interval_text_colors = [{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1},{r:0,g:0,b:0,a:1}];
+    
+    let fb_color_a = {r:221.13,g:225.12,b:254,a:1}
+    let fb_color_b = {r:254,g:230,b:254,a:1}
+    let fb_color_c = {r:253,g:245,b:254,a:1}
+
+
+
+    function setFBColorA(v: RgbaColor) {
+        console.log(v)
+        const colors = [v.r/256, v.g/256, v.b/256, v.a];
+        if (FB) {
+            FB.setFBColors('a',colors)
+        }
+    }
+    function setFBColorB(v: RgbaColor) {
+        const colors = [v.r/256, v.g/256, v.b/256, v.a];
+        if (FB) {
+            FB.setFBColors('b',colors)
+        }
+    }
+    function setFBColorC(v: RgbaColor) {
+        const colors = [v.r/256, v.g/256, v.b/256, v.a];
+        if (FB) {
+            FB.setFBColors('c',colors)
+        }
+    }
     let interval_popup_state_array = [...new Array(24).fill(false)] as boolean[]
     let interval_popup_state = false; 
     
     let intervalMarkersVisible = [false, true, false, true, false, false, true, false, true, false, true, false];
     let intervalMarkersTextVisible = [false, true, false, true, false, false, true, false, true, false, true, false];
+
     let fretboardTuning = [8,1,6,11,4,9,2,7,11,4]
     let numStrings = 6
     let minStrings = 2
     let maxStrings = 10
+    let numFrets = 21
 
-    $:fretboardMarkerColorHandler(interval_marker_colors)
-    $:fretboardTextColorHandler(interval_text_colors)
+
+
     $:intervalColorPickerPopupHandler(interval_popup_state_array)
     $:intervalColorHandler(interval_color_input)
     $:fretboardTuningHandler(fretboardTuning)
-   
+    $:fretboardFretCountHandler(numFrets)
+    $:fretboardStringCountHandler(numStrings)
+
     function markerColorInputPopupHandler(event: MouseEvent) {
         const target = event.target as HTMLElement;
         const bounds = (document.getElementById("colorwrapper") as HTMLElement).getBoundingClientRect();
@@ -99,7 +130,7 @@
         }
         const target = event.target as HTMLElement;
         const id = parseInt(`${target.id.length>2? target.id[2]:''}${target.id.length>3? target.id[3]:''}`)
-
+      
         if (kp.kpShift) {
             if (interval_colors_selected_indices.includes(id)) {
                 interval_colors_selected_indices = interval_colors_selected_indices.filter(i => i!==id)
@@ -110,16 +141,28 @@
                 })
                 if (id < 12) {
                     interval_marker_colors[id] = interval_color_input
-                } else {
+                } else if (id < 24) {
                     interval_text_colors[id-12] = interval_color_input 
+                } else if (id === 24) {
+                    fb_color_a = interval_color_input
+                } else if (id === 25) {
+                    fb_color_b = interval_color_input
+                } else if (id === 26) {
+                    fb_color_c = interval_color_input
                 }
             }
         } else {
             interval_colors_selected_indices = [id]
             if (id < 12) {
                 interval_color_input = interval_marker_colors[id]
-            } else {
-                interval_color_input = interval_text_colors[id-12]
+            } else if (id < 24) {
+                    interval_color_input = interval_text_colors[id-12]
+            } else if (id === 24) {
+                    interval_color_input = fb_color_a
+            } else if (id === 25) {
+                    interval_color_input = fb_color_b
+            } else if (id === 26) {
+                    interval_color_input = fb_color_c
             }
         }
 
@@ -131,11 +174,26 @@
         b: number;
         a: number;
     }) {
+        
         for (const index of interval_colors_selected_indices) {
+            console.log(index)
             if (index < 12) {
                 interval_marker_colors[index] = interval_color_input
-            } else {
+                fretboardMarkerColorHandler(interval_marker_colors)
+    
+            } else if (index < 24) {
                 interval_text_colors[index-12] = interval_color_input 
+                fretboardTextColorHandler(interval_text_colors)
+
+            } else if (index === 24) {
+                fb_color_a = interval_color_input
+                setFBColorA(fb_color_a)
+            } else if (index === 25) {
+                fb_color_b = interval_color_input
+                setFBColorB(fb_color_b)
+            } else if (index === 26) {
+                fb_color_c = interval_color_input
+                setFBColorC(fb_color_c)
             }
         }
     }
@@ -144,15 +202,22 @@
         const tuning = fretboardTuning.filter((n,i) => i >= maxStrings-numStrings)
         if (FB) {FB.setTuning(tuning)};
     }
-
+    function fretboardFretCountHandler(numFrets: number) {
+        if (FB) {FB.setFrets(numFrets)};
+    }
+    function fretboardStringCountHandler(numStrings: number) {
+        if (FB) {FB.setStrings(numStrings)};
+    }
     function fretboardMarkerColorHandler(rgbarr: RgbaColor[]) {
         const colors = rgbarr.map(v => [v.r/256, v.g/256, v.b/256, v.a]);
         if (FB) {FB.setMarkerColors(colors)};
     }
     function fretboardTextColorHandler(rgbarr: RgbaColor[]) {
+        console.log(rgbarr)
         const colors = rgbarr.map(v => [v.r/256, v.g/256, v.b/256, v.a]);
         if (FB) {FB.setMarkerTextColors(colors)};
     }
+
     function intervalColorPickerPopupHandler(popuparr: boolean[]) {
         let color_flag = false;
         for (const flag of popuparr) {
@@ -599,6 +664,8 @@ let labelflag = false;
 
         onMount(() => {
             if (canvas && fb_canvas) {
+              
+               
                 FB = new Fretboard({canvas: fb_canvas, canvas_id: fretboard_id, wrapper_id: 'fbwrapper'})
                 Piano = new PianoRoll({canvas: canvas, canvas_id: canvas_id, wrapper_id:"midinotewrapper"})
                 FB.setMarkerTextColors(text_colors)
@@ -729,13 +796,30 @@ function onKeyUp(e: KeyboardEvent) {
                         <svelte:fragment slot="summary"><b>Fretboard</b></svelte:fragment>
                         <svelte:fragment slot="lead"><CarbonTuning/></svelte:fragment>
                         <svelte:fragment slot="content">
-                            <RangeSlider for="boxcontrols" name="range-slider" bind:value={numStrings} min={2} max={10} step={1} ></RangeSlider>  
-                            <div> Strings: 6 </div>
-                            <RangeSlider for="boxcontrols" name="range-slider" bind:value={numStrings} min={2} max={10} step={1} ></RangeSlider>  
-                            <div> Frets: 22 </div>
-                            <div> Base Fret Color: </div>
-                            <div> Marker Fret Color: </div>
-                            <div> 0th Fret Color: </div>
+                            <div class="scale-parent">
+                                <div class="fretboard-wrapper" >
+                                    <div><b>Strings: {numStrings}</b></div>
+                                    <RangeSlider for="boxcontrols" name="range-slider" bind:value={numStrings} min={2} max={10} step={1} ></RangeSlider>  
+                                </div>
+                                <div class="fretboard-wrapper" >
+                                    <div><b>Frets: {numFrets}</b></div>
+                                    <RangeSlider for="boxcontrols" name="range-slider" bind:value={numFrets} min={12} max={27} step={1} ></RangeSlider>  
+                                </div>
+                                <div class="fretboard-wrapper" >
+                                    <div><b>Base Fret Color</b></div>
+                                    <div class="colorselector-marker bord" id={`cm24`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(fb_color_a).map(c => `${c}`).join(',')});`} />
+                                    
+                                </div>
+                                <div class="fretboard-wrapper" >
+                                    <div><b>Marker Fret Color</b></div>
+                                    <div class="colorselector-marker bord" id={`cm25`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(fb_color_b).map(c => `${c}`).join(',')});`} />
+                                    
+                                </div>
+                                <div class="fretboard-wrapper" >
+                                    <div><b>0th Fret Color</b></div>
+                                    <div class="colorselector-marker bord" id={`cm26`} on:click={markerColorInputClickHandler} style ={`background-color: rgba(${Object.values(fb_color_c).map(c => `${c}`).join(',')});`} />
+                                    
+                                </div>
                         </svelte:fragment>
                         
                     </AccordionItem>
@@ -842,6 +926,10 @@ function onKeyUp(e: KeyboardEvent) {
 .fdz {
     height: 20vh;
 }
+.bord {
+    border: solid 1px rgba(var(--color-secondary-400));
+    border-radius: 3px;
+}
 .container {
   display: grid; 
   width: 100%;
@@ -924,6 +1012,22 @@ function onKeyUp(e: KeyboardEvent) {
     height: 1.5rem;
     border-radius: 1rem;
 }
+.fretboard-wrapper {
+    width: 100%;
+    height: 2rem;
+    padding: 1px;
+    display: grid;
+    align-items: center;
+    justify-items: left;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+}
+.fretboard-wrapper:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+.fretboard-wrapper:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
+
 .interval-wrapper {
     width: 100%;
     height: 2rem;
@@ -943,19 +1047,26 @@ function onKeyUp(e: KeyboardEvent) {
 .interval-wrapper:nth-child(4) { grid-area: 1 / 4 / 2 / 5; }
 
 .scale-wrapper {
+    
     width: 100%;
     height: 100%;
     padding: 1px;
     display: grid;
     align-items: center;
-    justify-items: center;
-    grid-template-columns: 1fr 2rem;
+    justify-items: left;
+    grid-template-columns: 90% 10%;
     grid-template-rows: 1fr;
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 
 }
-.scale-wrapper:nth-child(1) { grid-area: 1 / 1 / 2 / 2; }
+.scale-wrapper:nth-child(1) { 
+    
+    grid-area: 1 / 1 / 2 / 2; 
+   
+    min-width: 100%;
+    max-width: 100%;
+}
 .scale-wrapper:nth-child(2) { grid-area: 1 / 2 / 2 / 3; }
 
 

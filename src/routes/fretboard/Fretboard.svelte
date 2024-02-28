@@ -5,9 +5,9 @@
     import Wrapper from 'svelte-awesome-color-picker';
     import { AppRail, AppRailTile, AppRailAnchor, AppShell, RangeSlider } from '@skeletonlabs/skeleton';
     import type {RgbaColor} from 'svelte-awesome-color-picker';
-    import {Fretboard} from './Fretboard'
+    import {Fretboard} from '../../components/Fretboard/Fretboard'
     import { onMount } from 'svelte';
-    import Dropdown from '../Dropdown.svelte';
+    import Dropdown from '../../components/Dropdown.svelte';
 
     import { popup } from '@skeletonlabs/skeleton';
     import type { PopupSettings } from '@skeletonlabs/skeleton';

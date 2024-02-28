@@ -68,7 +68,7 @@ export class Fretboard {
     music_scale_markers = [false, true, false, true, false, false, true, false, true, false, true, false]
     label_id_list = [] as string[];
     wrapper_id: string;
-    tuning_octave = [4,3,3,3,2,2]
+    tuning_octave = [4,3,3,3,2,2,2,2,2,2]
     circle_input = {'C':[] as number[],'C#':[] as number[],'D':[] as number[],'D#':[] as number[],'E':[] as number[],'F':[] as number[],'F#':[] as number[],'G':[] as number[],'G#':[] as number[],'A':[] as number[],'A#':[] as number[],'B': [] as number[]}
     note_labels = {
             top: [] as number[],
@@ -116,7 +116,7 @@ export class Fretboard {
                 }
                 
             }
-            console.log(ele)
+           
             if(( ele[0] === 'C')||( ele[0] ==='C#')||( ele[0] ==='D')||( ele[0] ==='D#')||( ele[0] ==='E')||( ele[0] ==='F')||( ele[0] ==='F#')||( ele[0] ==='G')||( ele[0] ==='G#')||( ele[0] ==='A')||( ele[0] ==='A#')||( ele[0] ==='B')) {
                 this.circle_input[ele[0]].push(parseInt(ele[1]))
             }
@@ -156,9 +156,10 @@ export class Fretboard {
         this.recalc_render_flag = true
     }
     onClick(e: PointerEvent | MouseEvent) {
-        console.log('clicked',e.target)
+       
     }
     setFBColors(type: 'a'|'b'|'c', colors: number[]) {
+       
         switch(type) {
             case 'a': this.f_color_a = colors; break;
             case 'b': this.f_color_b = colors; break;
@@ -170,7 +171,7 @@ export class Fretboard {
         let label_flag = false;
         const wrapper = document?.getElementById(this.wrapper_id)
         const multiplier = this.Render?.multiplier||1
-        console.log(this.note_labels)
+   
         if (wrapper) {
 
             //add ids if needed

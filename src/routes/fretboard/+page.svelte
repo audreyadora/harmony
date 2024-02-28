@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Fretboard from "../../components/Fretboard/Fretboard.svelte";
+    import Fretboard from "./Fretboard.svelte";
 </script>
 
 
