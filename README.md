@@ -5,7 +5,7 @@
 
 This web app is designed as a toolkit for midi-guitar playalong and reharmonization 🌟 
 
-Both the fretboard and midi note editor components render through a custom webgl2 implementation. The motivation for making a WebGL2 render engine came from the need for a simple to impliment midi editor component that doesn't rely on HTML Divs for each rectangle, as with larger midi files this becomes unstable and resource heavy. 
+Both the fretboard and midi note editor components render through a custom webgl2 implementation. Check out (and/or steal for your own usage) the Midi Piano Roll component here: 
 
 Try it out with this midi file: [Debussy: Arabesque](https://github.com/audreyadora/harmony/blob/9bd184101be2895db87d364ca5297d4de0dbe762/static/arabesqu.mid)
 
